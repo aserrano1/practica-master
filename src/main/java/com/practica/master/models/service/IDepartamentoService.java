@@ -1,6 +1,7 @@
 package com.practica.master.models.service;
 
 import com.prueba.commons.proyecto.models.entity.Departamento;
+import com.prueba.commons.proyecto.models.entity.Pais;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface IDepartamentoService {
 
     Departamento findByNameIgnoreCaseContaining(String name);
 
-    List<Departamento> findByPais(Departamento departamento);
+    List<Departamento> findByPais(Pais p);
 }

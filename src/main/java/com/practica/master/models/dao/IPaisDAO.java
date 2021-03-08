@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IPaisDAO  extends CrudRepository<Pais,Long> {
-
     Pais findByNameIgnoreCaseContaining(String name);
 }

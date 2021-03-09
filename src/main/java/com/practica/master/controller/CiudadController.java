@@ -1,5 +1,6 @@
 package com.practica.master.controller;
 
+import com.practica.master.exception.exceptions.*;
 import com.practica.master.models.service.ICiudadService;
 import com.prueba.commons.proyecto.models.entity.Ciudad;
 import com.prueba.commons.proyecto.models.entity.Departamento;
@@ -18,7 +19,7 @@ public class CiudadController {
     @Autowired
     private ICiudadService ciudadSer;
 
-    @ApiOperation(value = "Retorna lista de Ciudads", notes = "<br>Retorna una lista con todas las Ciudad registradas en la BD"
+    @ApiOperation(value = "Retorna lista de Ciudades", notes = "<br>Retorna una lista con todas las Ciudades registradas en la BD"
             , response = Ciudad.class, responseContainer = "List", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Ciudad.class),
@@ -28,12 +29,12 @@ public class CiudadController {
             @ApiResponse(code = 500, message = "Error del sistema")
     })
     @GetMapping("/listar")
-    public List<Ciudad> findAll()  {
+    public List<Ciudad> findAll() throws TrainingResourceNoExistsException {
         return ciudadSer.findByAll();
 
     }
 
-    @ApiOperation(value = "Retorna lista de Ciudads", notes = "<br>Retorna una lista de Ciudads que tengan esten en el departamento solicitado"
+    @ApiOperation(value = "Retorna lista de Ciudades", notes = "<br>Retorna una lista de Ciudades que esten en el departamento solicitado"
             , response = Ciudad.class, responseContainer = "List", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Ciudad.class),
@@ -43,7 +44,7 @@ public class CiudadController {
             @ApiResponse(code = 500, message = "Error del sistema")
     })
     @GetMapping("/listar/Departamento")
-    public List<Ciudad> findByDepartamento(@RequestBody Departamento d)  {
+    public List<Ciudad> findByDepartamento(@RequestBody Departamento d) throws TrainingResourceNotFoundException {
         return ciudadSer.findByDepartamento(d);
     }
 
@@ -57,11 +58,11 @@ public class CiudadController {
             @ApiResponse(code = 500, message = "Error del sistema")
     })
     @GetMapping("/buscar/{id}")
-    public Ciudad finById(@PathVariable Long id) {
+    public Ciudad finById(@PathVariable Long id) throws TrainingResourceNoExistsException {
         return ciudadSer.findById(id);
     }
 
-    @ApiOperation(value = "Retorna una Ciudad", notes = "<br>MRetorna una Ciudad atraves del nombre"
+    @ApiOperation(value = "Retorna una Ciudad", notes = "<br>Retorna una Ciudad atraves del nombre"
             , response = Ciudad.class, responseContainer = "Ciudad", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Ciudad.class),
@@ -70,9 +71,8 @@ public class CiudadController {
             @ApiResponse(code = 404, message = "Recurso no encotrado"),
             @ApiResponse(code = 500, message = "Error del sistema")
     })
-    @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Ciudad findByName(@PathVariable String name) {
+    @GetMapping("/buscar/name/{name}")
+    public Ciudad findByName(@PathVariable String name) throws TrainingResourceNoExistsException {
         return ciudadSer.findByNameIgnoreCaseContaining(name);
     }
 
@@ -87,7 +87,7 @@ public class CiudadController {
     })
     @PostMapping("/crear")
     @ResponseStatus(HttpStatus.CREATED)
-    public Ciudad crear(@RequestBody Ciudad a) {
+    public Ciudad crear(@RequestBody Ciudad a) throws TrainingResourceNoCreateException {
         return ciudadSer.crear(a);
     }
 
@@ -102,7 +102,7 @@ public class CiudadController {
     })
     @PutMapping("/edit/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Ciudad edit(@RequestBody Ciudad a, @PathVariable Long id) {
+    public Ciudad edit(@RequestBody Ciudad a, @PathVariable Long id) throws TrainingResourceNoExistsException, TrainingResourceNoUpdateException {
         return ciudadSer.editar(id,a);
     }
 
@@ -118,7 +118,7 @@ public class CiudadController {
     })
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) throws TrainingResourceNoExistsException, TrainingResourceDeletedException {
         ciudadSer.delete(id);
     }
 }

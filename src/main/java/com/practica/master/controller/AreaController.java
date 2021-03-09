@@ -1,5 +1,9 @@
 package com.practica.master.controller;
 
+import com.practica.master.exception.exceptions.TrainingResourceDeletedException;
+import com.practica.master.exception.exceptions.TrainingResourceNoCreateException;
+import com.practica.master.exception.exceptions.TrainingResourceNoExistsException;
+import com.practica.master.exception.exceptions.TrainingResourceNoUpdateException;
 import com.practica.master.models.service.IAreaService;
 import com.prueba.commons.proyecto.models.entity.Area;
 import io.swagger.annotations.ApiOperation;
@@ -28,12 +32,12 @@ public class AreaController {
             @ApiResponse(code = 500, message = "Error del sistema")
     })
     @GetMapping("/listar")
-    public List<Area> findAll()  {
+    public List<Area> findAll() throws TrainingResourceNoExistsException {
         return areaSer.findByAll();
 
     }
 
-    @ApiOperation(value = "Retorna lista de Areas", notes = "<br>Retorna una lista con de Areas que tengan el esatdo solicitado"
+    @ApiOperation(value = "Retorna lista de Areas", notes = "<br>Retorna una lista con las Areas que tengan el esatdo solicitado"
             , response = Area.class, responseContainer = "List", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Area.class),
@@ -43,11 +47,11 @@ public class AreaController {
             @ApiResponse(code = 500, message = "Error del sistema")
     })
     @GetMapping("/listar/estado/{estado}")
-    public List<Area> findByEstado(@PathVariable boolean estado)  {
+    public List<Area> findByEstado(@PathVariable boolean estado) throws TrainingResourceNoExistsException {
         return areaSer.findByEstado(estado);
     }
 
-    @ApiOperation(value = "Retorna una Area", notes = "<br>Retorna una Area atraves del ID"
+    @ApiOperation(value = "Retorna un Area", notes = "<br>Retorna una Area atraves del ID"
             , response = Area.class, responseContainer = "Area", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Area.class),
@@ -57,11 +61,11 @@ public class AreaController {
             @ApiResponse(code = 500, message = "Error del sistema")
     })
     @GetMapping("/buscar/{id}")
-    public Area finById(@PathVariable Long id) {
+    public Area finById(@PathVariable Long id) throws TrainingResourceNoExistsException {
         return areaSer.findById(id);
     }
 
-    @ApiOperation(value = "Crea una Area", notes = "<br>Crea una Area recibiendo un objeto Area"
+    @ApiOperation(value = "Crea un Area", notes = "<br>Crea una Area recibiendo un objeto Area"
             , response = Area.class, responseContainer = "Area", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Area.class),
@@ -72,11 +76,11 @@ public class AreaController {
     })
     @PostMapping("/crear")
     @ResponseStatus(HttpStatus.CREATED)
-    public Area crear(@RequestBody Area a) {
+    public Area crear(@RequestBody Area a) throws TrainingResourceNoCreateException {
         return areaSer.crear(a);
     }
 
-    @ApiOperation(value = "Actualiza la informacion de una Area", notes = "<br>Actualiza la informacion de una Area atraves del ID"
+    @ApiOperation(value = "Actualiza la informacion de un Area", notes = "<br>Actualiza la informacion de un Area atraves del ID"
             , response = Area.class, responseContainer = "Area", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Area.class),
@@ -87,12 +91,12 @@ public class AreaController {
     })
     @PutMapping("/edit/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Area edit(@RequestBody Area a, @PathVariable Long id) {
+    public Area edit(@RequestBody Area a, @PathVariable Long id) throws TrainingResourceNoExistsException, TrainingResourceNoUpdateException {
         return areaSer.editar(id,a);
     }
 
 
-    @ApiOperation(value = "Elimina una Area", notes = "<br>Elimina una Area atraves del ID"
+    @ApiOperation(value = "Elimina un Area", notes = "<br>Elimina un Area atraves del ID"
             , response = Area.class, responseContainer = "null", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Area.class),
@@ -103,11 +107,11 @@ public class AreaController {
     })
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) throws TrainingResourceNoExistsException, TrainingResourceDeletedException {
         areaSer.delete(id);
     }
 
-    @ApiOperation(value = "Modifica el estado del Area", notes = "<br>Modifica el esrado de un Area atraves del ID"
+    @ApiOperation(value = "Modifica el estado del Area", notes = "<br>Modifica el estado de un Area atraves del ID"
             , response = Area.class, responseContainer = "Area", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operación Exitosa", response = Area.class),
@@ -116,8 +120,8 @@ public class AreaController {
             @ApiResponse(code = 404, message = "Recurso no encotrado"),
             @ApiResponse(code = 500, message = "Error del sistema")
     })
-    @DeleteMapping("/estado/{estado}")
-    public Area estado(@PathVariable Long id, @PathVariable Boolean estado) {
+    @GetMapping("/estado/{estado}")
+    public Area estado(@PathVariable Long id, @PathVariable Boolean estado) throws TrainingResourceNoExistsException {
         return areaSer.estado(id,estado);
     }
 

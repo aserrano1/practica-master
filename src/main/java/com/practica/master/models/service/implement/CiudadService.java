@@ -1,5 +1,6 @@
 package com.practica.master.models.service.implement;
 
+import com.practica.master.exception.exceptions.*;
 import com.practica.master.models.dao.ICiudadDAO;
 import com.practica.master.models.service.ICiudadService;
 import com.prueba.commons.proyecto.models.entity.Ciudad;
@@ -18,43 +19,60 @@ public class CiudadService implements ICiudadService {
     private Ciudad ciudad;
 
     @Override
-    public List<Ciudad> findByAll() {
+    public List<Ciudad> findByAll() throws TrainingResourceNoExistsException {
+        if (dao.findAll()==null) throw new TrainingResourceNoExistsException();
         return (List<Ciudad>) dao.findAll();
     }
 
     @Override
-    public Ciudad findById(Long id) {
+    public List<Ciudad> findByDepartamento(Departamento d) throws TrainingResourceNotFoundException {
+        if (dao.findByDepartamento(d)==null) throw new TrainingResourceNotFoundException();
+        return (List<Ciudad>) dao.findByDepartamento(d);
+    }
+
+    @Override
+    public Ciudad findById(Long id) throws TrainingResourceNoExistsException {
         ciudad = dao.findById(id).orElse(null);
+        if (ciudad==null) throw new TrainingResourceNoExistsException();
         return ciudad;
     }
 
     @Override
-    public Ciudad crear(Ciudad ciudad) {
-        return dao.save(ciudad);
+    public Ciudad findByNameIgnoreCaseContaining(String name) throws TrainingResourceNoExistsException {
+        ciudad = dao.findByNameIgnoreCaseContaining(name);
+        if (ciudad==null) throw new TrainingResourceNoExistsException();
+        return ciudad;
     }
 
     @Override
-    public Ciudad editar(Long id, Ciudad city) {
+    public Ciudad crear(Ciudad ciudad) throws TrainingResourceNoCreateException {
+        try{
+            return dao.save(ciudad);
+        }catch (Exception e){
+            throw new TrainingResourceNoCreateException();
+        }
+    }
+
+    @Override
+    public Ciudad editar(Long id, Ciudad city) throws TrainingResourceNoExistsException, TrainingResourceNoUpdateException {
         ciudad = findById(id);
         ciudad.setDepartamento(city.getDepartamento());
         ciudad.setName(city.getName());
-        return dao.save(ciudad);
+        try {
+            return dao.save(ciudad);
+        }catch (Exception e){
+            throw new TrainingResourceNoUpdateException();
+        }
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws TrainingResourceNoExistsException, TrainingResourceDeletedException {
         ciudad = findById(id);
-        dao.delete(ciudad);
-    }
 
-    @Override
-    public Ciudad findByNameIgnoreCaseContaining(String name) {
-        ciudad = dao.findByNameIgnoreCaseContaining(name);
-        return ciudad;
-    }
-
-    @Override
-    public List<Ciudad> findByDepartamento(Departamento d) {
-        return (List<Ciudad>) dao.findByDepartamento(d);
+        try{
+            dao.delete(ciudad);
+        }catch (Exception e){
+            throw new TrainingResourceDeletedException();
+        }
     }
 }
